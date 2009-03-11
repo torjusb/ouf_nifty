@@ -1,0 +1,8 @@
+## Interface: 30000
+## Author: Nifty
+## Title: |cff0088ffoUF Nifty|r
+## Version: 0.1
+## OptionalDeps: oUF_PowerSpark, oUF_DebuffHighlight, oUF_Banzai, oUF_BarFader, oUF_Reputation
+## RequiredDeps: oUF
+
+layout.lua
