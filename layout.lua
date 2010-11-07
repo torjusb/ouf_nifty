@@ -48,6 +48,18 @@ local playerCastBar_y = -300
 local targetCastBar_x = 11
 local targetCastBar_y = -200
 
+oUF.Tags['[Serendipity]'] = function(u)
+    local _, _, _, count = UnitAura("player", "Serendipity"); return "" and count --'|cff0080ff.|r'
+end
+oUF.TagEvents['[Serendipity]'] = 'UNIT_AURA'
+
+
+local function SerendipityUpdate()
+    local _, _, _, count = UnitAura("player", "Serendipity")
+    self.Serendipity:SetText(count)
+end
+
+
 -- ------------------------------------------------------------------------
 -- change some colors :)
 -- ------------------------------------------------------------------------
@@ -92,7 +104,7 @@ local updateLevel = function(self, unit, name)
 	local lvl = UnitLevel(unit)
 	local typ = UnitClassification(unit)
 	
-	local color = GetDifficultyColor(lvl)  
+	local color = GetQuestDifficultyColor(lvl)  
         
 	if lvl <= 0 then	lvl = "??" end
             
@@ -130,7 +142,7 @@ local updateName = function(self, event, unit)
 	if(self.unit ~= unit) then return end
 
 	local name = UnitName(unit)
-    self.Name:SetText(string.lower(name))
+    self.Name:SetText(string.lower(name or ""))
 	
 	if unit=="targettarget" then
 		local totName = UnitName(unit)
@@ -156,6 +168,7 @@ local updateHealth = function(self, event, unit, bar, min, max)
     local cur, maxhp = min, max
 	local missing = maxhp-cur
 	local isfriend = UnitIsFriend("player", "target")
+    local unitLvl = UnitLevel("target")
     
     local d = floor(cur/maxhp*100)
     
@@ -175,6 +188,8 @@ local updateHealth = function(self, event, unit, bar, min, max)
     elseif(unit == "target") then
 		if(d < 100 and isfriend) then
 			bar.value:SetText("|cffff7f74-"..missing.."|r |cff33EE44"..numberize(cur).."/"..numberize(maxhp).."|r"--[[..d.."%"]])
+        elseif(unitLvl == -1) then
+            bar.value:SetText("|r |cff33EE44"..numberize(cur).."|r |cff33EE44"..d.."%|r")
 		elseif(d < 100) then
 			bar.value:SetText("|r |cff33EE44"..numberize(cur).."/"..numberize(maxhp).."|r")
 		else
@@ -298,7 +313,7 @@ local func = function(self, unit)
 	-- healthbar
 	--
 	self.Health = CreateFrame"StatusBar"
-	self.Health:SetHeight(19) -- Custom height
+	self.Health:SetHeight(20) -- Custom height
 	self.Health:SetStatusBarTexture(bartex)
     self.Health:SetParent(self)
 	self.Health:SetPoint"TOP"
@@ -398,7 +413,7 @@ local func = function(self, unit)
     if unit=="player" then
         self:SetWidth(250)
       	self:SetHeight(20)
-		self.Health:SetHeight(15.5)
+		self.Health:SetHeight(16)
 		self.Name:Hide()
 		self.Health.value:SetPoint("RIGHT", 0, 9)
 	    self.Power:SetHeight(3)
@@ -457,7 +472,20 @@ local func = function(self, unit)
 			self.DruidManaText:SetShadowOffset(1, -1)
 		end
 		--]]
-		
+
+        
+        --
+        -- Serendipity counter
+        --
+        self.Serendipity = self:CreateFontString(nil, "OVERLAY")
+        self.Serendipity:SetPoint("LEFT", self, "RIGHT", 10, 0)
+        self.Serendipity:SetFont(font, 20, "OUTLINE")
+        self.Serendipity:SetTextColor(0, 0.81, 1)
+        self.Serendipity:SetShadowOffset(1, -1)
+        self.Serendipity:SetJustifyH("RIGHT")
+        self:Tag(self.Serendipity, '[Serendipity]')
+        
+        
 		--
 		-- leader icon
 		--
@@ -528,7 +556,7 @@ local func = function(self, unit)
     if unit=="target" then
 		self:SetWidth(250)
 		self:SetHeight(20)
-		self.Health:SetHeight(15.5)
+		self.Health:SetHeight(16)
 		self.Power:SetHeight(3)
 		self.Power.value:Hide()
 		self.Health.value:SetPoint("RIGHT", 0, 9)
@@ -536,7 +564,7 @@ local func = function(self, unit)
 		self.Name:SetHeight(20)
 		self.Name:SetWidth(120)
 			
-		self.Health.colorClass = false
+		self.Health.colorClass = true
 		
 		--
 		-- combo points
@@ -544,12 +572,12 @@ local func = function(self, unit)
 		if(playerClass=="ROGUE" or playerClass=="DRUID") then
 			self.CPoints = self:CreateFontString(nil, "OVERLAY")
 			self.CPoints:SetPoint("RIGHT", self, "LEFT", -10, 0)
-			self.CPoints:SetFont(font, 38)
+			self.CPoints:SetFont(font, 20, "OUTLINE")
 			self.CPoints:SetTextColor(0, 0.81, 1)
 			self.CPoints:SetShadowOffset(1, -1)
 			self.CPoints:SetJustifyH"RIGHT" 
 		end
-		
+    
 		--
 		-- raid target icons
 		--
@@ -590,7 +618,7 @@ local func = function(self, unit)
 	-- ------------------------------------
 	-- target of target and focus
 	-- ------------------------------------
-	if unit=="targettarget" or unit=="focus" then
+	if unit=="targettarget" or unit=="focus" or unit=="focusTarget" then
 		self:SetWidth(120)
 		self:SetHeight(18)
 		self.Health:SetHeight(18)
@@ -814,6 +842,8 @@ local tot = oUF:Spawn("targettarget", "oUF_TargetTarget")
 tot:SetPoint("TOPRIGHT", target, 0, 35)
 local focus	= oUF:Spawn("focus", "oUF_Focus")
 focus:SetPoint("BOTTOMRIGHT", player, 0, -30) 
+--OUFN_FT	= oUF:Spawn("focusTarget", "oUF_FocusTarget")
+--OUFN_FT:SetPoint("BOTTOMRIGHT", player, 200, -220) 
 
 --self.reputation:Show()
 
