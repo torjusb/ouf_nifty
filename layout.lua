@@ -63,11 +63,14 @@ end
 -- ------------------------------------------------------------------------
 -- change some colors :)
 -- ------------------------------------------------------------------------
-oUF.colors.happiness = {
-	[1] = {182/225, 34/255, 32/255},	-- unhappy
-	[2] = {220/225, 180/225, 52/225},	-- content
-	[3] = {143/255, 194/255, 32/255},	-- happy
-}
+
+local colors = setmetatable({
+	health = {.45, .73, .27},
+	power = setmetatable({
+		['MANA'] = {.27, .53, .73},
+		['RAGE'] = {.73, .27, .27}
+	}, {__index = oUF.colors.power})
+}, {__index = oUF.colors})
 
 -- ------------------------------------------------------------------------
 -- right click
@@ -135,6 +138,35 @@ local updateLevel = function(self, unit, name)
 	end
 end
 
+oUF.Tags['nifty:level'] = function (unit)
+	local lvl = UnitLevel(unit)
+	local class = UnitClassification(unit)
+	local color = GetQuestDifficultyColor(lvl)
+	local tagValue
+	
+	if lvl <= 0 then
+		lvl = "??"
+	end
+	
+	if class == "worldboss" then
+		tagValue = "|cffff0000" .. lvl .. "b|r"
+	elseif class == "rareelite" then
+		tagValue = lvl .. "r+"
+	elseif class == "elite" then
+		tagValue = lvl .. "+"
+	elseif class == "rare" then
+		tagValue = lvl .. "r"
+	else
+		if UnitIsConnected(unit) == nil then
+			tagValue = "??"
+		else
+			tagValue = lvl
+		end
+	end
+	
+	return tagValue
+end
+
 -- ------------------------------------------------------------------------
 -- name update
 -- ------------------------------------------------------------------------
@@ -160,6 +192,7 @@ local updateName = function(self, event, unit)
 		updateLevel(self, unit, name)      
     end
 end
+
 
 -- ------------------------------------------------------------------------
 -- health update
@@ -215,6 +248,52 @@ local updateHealth = function(self, event, unit, bar, min, max)
     self:UNIT_NAME_UPDATE(event, unit)
 end
 
+oUF.Tags['nifty:health'] = function (unit)	
+	if not UnitIsConnected(unit) or UnitIsDead(unit) or UnitIsGhost(unit) then 
+		return
+	end
+	
+	local curHp, maxHp = UnitHealth(unit), UnitHealthMax(unit)
+	local deficitHp = curHp - maxHp
+	local percentHp = floor(curHp / maxHp * 100)
+	local isFriend = UnitIsFriend("player", "target")
+	local unitLvl = UnitLevel("target")
+	local tagValue
+	
+	if unit == "player" then
+		if curHp == maxHp then
+			tagValue = "|cff33EE44" .. numberize(curHp) .. "|r"
+		else
+			tagValue = ""
+		end
+	elseif unit == "targettarget" or unit == "focus" then
+		tagValue = deficitHp .. "%"
+	elseif unit == "target" then
+		if percentHp < 100 and isFriend then
+			tagValue = "|cffff7f74" .. deficitHp .. "|r |cff33EE44" .. numberize(cur) .. "/" .. numberize(maxHp) .. "|r"
+		elseif unitLvl == -1 then
+			tagValue = "|r |cff33EE44" .. numberize(curHp) .. "|r |cff33EE44" .. percentHp .."%|r"
+		elseif percentHp < 100 then
+			tagValue = "|r |cff33EE44" .. numberize(curHp) .. "/" .. numberize(maxHp) .. "|r"
+		else
+			tagValue = "|cff33EE44" .. numberize(maxHp) .. "|r"
+		end
+	elseif curHp == maxHp then
+		tagValue = "" -- maybe pet condition here?
+	else
+		if (maxHp - curHp) < maxHp then
+			if unit == "pet" then
+				tagValue = "-" .. maxHp - curHp
+			else
+				tagValue = "-" .. maxHp - curHp
+			end
+		end
+	end
+		
+	return tagValue
+end
+--oUF.TagEvents['nifty:health'] = oUF.TagEvents.missinghp
+
 
 -- ------------------------------------------------------------------------
 -- power update
@@ -269,6 +348,45 @@ local updatePower = function(self, event, unit, bar, min, max)
 	end
 end
 
+oUF.Tags['nifty:power'] = function (unit)
+	if not UnitIsConnected(unit) or UnitIsDead(unit) or UnitIsGhost(unit) then 
+		return
+	end
+
+	local min, max = UnitPower(unit), UnitPowerMax(unit)
+	local tagValue
+	
+	if UnitIsPlayer(unit) == nil then
+		tagValue = ""
+	else
+		local _, ptype = UnitPowerType(unit)
+		local color = colors.power[ptype]
+		
+		if min == 0 then
+			tagValue = ""
+		elseif unit == "player" then
+			if (max - min) > 0 then
+				tagValue = min
+			elseif min == max then
+				tagValue = ""
+			else
+				tagValue = min
+			end
+		else
+			if (max - min) > 0 then
+				tagValue = min
+			else
+				tagValue = min
+			end
+		end
+	end
+	
+	print(tagValue)
+	
+	return tagValue
+end
+oUF.TagEvents['nifty:power'] = oUF.TagEvents.missingpp
+
 -- ------------------------------------------------------------------------
 -- aura reskin
 -- ------------------------------------------------------------------------
@@ -291,54 +409,76 @@ end
 -- ------------------------------------------------------------------------
 -- the layout starts here
 -- ------------------------------------------------------------------------
-local func = function(self, unit)
-	self.menu = menu -- Enable the menus
 
+local UnitSpecific = {
+	player = function (self, ...)	
+        -- Serendipity counter
+        self.Serendipity = self:CreateFontString(nil, "OVERLAY")
+        self.Serendipity:SetPoint("LEFT", self, "RIGHT", 10, 0)
+        self.Serendipity:SetFont(font, 20, "OUTLINE")
+        self.Serendipity:SetTextColor(0, 0.81, 1)
+        self.Serendipity:SetShadowOffset(1, -1)
+        self.Serendipity:SetJustifyH("RIGHT")
+		-- self:Tag(self.Serendipity, '[Serendipity]')
+	end,
+	
+	target = function (self, ...)
+	
+	end
+}
+
+local Shared = function (self, unit, isSingle)
+	self.menu = menu -- Enable the menus
+	
 	self:SetScript("OnEnter", UnitFrame_OnEnter)
 	self:SetScript("OnLeave", UnitFrame_OnLeave)
     
-	self:RegisterForClicks"anyup"
+	self:RegisterForClicks("anyup")
 	self:SetAttribute("*type2", "menu")
+	
+	self:SetWidth(250)
+  	self:SetHeight(20)
 
-	--
+	self.colors = colors
+
 	-- background
 	--
-	self:SetBackdrop{
-	bgFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 16,
-	insets = {left = -2, right = -2, top = -2, bottom = -2},
-	}
+	do
+		local ins = 2
+		self:SetBackdrop({
+			bgFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 16,
+			insets = { left = -ins, right = -ins, top = -ins, bottom = -ins },
+		})
+	end
 	self:SetBackdropColor(0,0,0,1) -- and color the backgrounds
     
-	--
-	-- healthbar
-	--
-	self.Health = CreateFrame"StatusBar"
-	self.Health:SetHeight(20) -- Custom height
+	-- Healthbar
+	self.Health = CreateFrame "StatusBar"
+	self.Health:SetHeight(16)
 	self.Health:SetStatusBarTexture(bartex)
     self.Health:SetParent(self)
-	self.Health:SetPoint"TOP"
-	self.Health:SetPoint"LEFT"
-	self.Health:SetPoint"RIGHT"
-	--
-	-- healthbar background
-	--
+	self.Health:SetPoint "TOP"
+	self.Health:SetPoint "LEFT"
+	self.Health:SetPoint "RIGHT"
+	
+	-- Healhtbar background
 	self.Health.bg = self.Health:CreateTexture(nil, "BORDER")
 	self.Health.bg:SetAllPoints(self.Health)
 	self.Health.bg:SetTexture(bartex)
 	self.Health.bg:SetAlpha(0.30)  
 	
-	--
-	-- healthbar text
-	--
-	self.Health.value = self.Health:CreateFontString(nil, "OVERLAY")
-	self.Health.value:SetPoint("RIGHT", -2, 2)
-	self.Health.value:SetFont(font, fontsize, "OUTLINE")
-	self.Health.value:SetTextColor(1,1,1)
-	self.Health.value:SetShadowOffset(1, -1)
+	-- Healthbar text
+	local healthValue = self.Health:CreateFontString(nil, "OVERLAY")
+	healthValue:SetPoint("RIGHT", -2, 2)
+	healthValue:SetFont(font, fontsize, "OUTLINE")
+	healthValue:SetTextColor(1,1,1)
+	healthValue:SetShadowOffset(1, -1)
+	self:Tag(healthValue, '[nifty:health]')
+	
+	self.Health.value = healthValue
+	
 
-	--
-	-- healthbar functions
-	--
+	-- Healthbar functions
 	self.Health.frequentUpdates = true
 	self.Health.colorClass = true 
 	self.Health.colorReaction = true 
@@ -355,7 +495,7 @@ local func = function(self, unit)
 	self.Power:SetParent(self)
 	self.Power:SetPoint"LEFT"
 	self.Power:SetPoint"RIGHT"
-	self.Power:SetPoint("TOP", self.Health, "BOTTOM", 0, -1.45) -- Little offset to make it pretty
+	self.Power:SetPoint("TOP", self.Health, "BOTTOM", 0, -1) -- Little offset to make it pretty
 
 	--
 	-- powerbar background
@@ -365,15 +505,16 @@ local func = function(self, unit)
 	self.Power.bg:SetTexture(bartex)
 	self.Power.bg:SetAlpha(0.30)  
 
-	--
 	-- powerbar text
-	--
-	self.Power.value = self.Power:CreateFontString(nil, "OVERLAY")
-    self.Power.value:SetPoint("RIGHT", self.Health.value, "BOTTOMRIGHT", 0, -5) -- powerbar text in health box
-	self.Power.value:SetFont(font, fontsize, "OUTLINE")
-	self.Power.value:SetTextColor(1,1,1)
-	self.Power.value:SetShadowOffset(1, -1)
-    self.Power.value:Hide()
+	local powerValue = self.Power:CreateFontString(nil, "OVERLAY")
+    powerValue:SetPoint("RIGHT", self.Health.value, "BOTTOMRIGHT", 0, -5) -- powerbar text in health box
+	powerValue:SetFont(font, fontsize, "OUTLINE")
+	powerValue:SetTextColor(1,1,1)
+	powerValue:SetShadowOffset(1, -1)
+    --powerValue:Hide()
+	self:Tag(powerValue, '[nifty:power]')
+
+	self.Power.value = powerValue
     
     --
 	-- powerbar functions
@@ -396,16 +537,33 @@ local func = function(self, unit)
 	self.Name:SetShadowOffset(1, -1)
     self.UNIT_NAME_UPDATE = updateName
 
-	--
 	-- level
-	--
-	self.Level = self.Health:CreateFontString(nil, "OVERLAY")
-	self.Level:SetPoint("LEFT", self.Health, 0, 9)
-	self.Level:SetJustifyH("LEFT")
-	self.Level:SetFont(font, fontsize, "OUTLINE")
-    self.Level:SetTextColor(1,1,1)
-	self.Level:SetShadowOffset(1, -1)
-	self.UNIT_LEVEL = updateLevel
+	local level = self.Health:CreateFontString(nil, "OVERLAY")
+	level = self.Health:CreateFontString(nil, "OVERLAY")
+	level:SetPoint("LEFT", self.Health, 0, 9)
+	level:SetJustifyH("LEFT")
+	level:SetFont(font, fontsize, "OUTLINE")
+    level:SetTextColor(1,1,1)
+	level:SetShadowOffset(1, -1)
+	--self.UNIT_LEVEL = updateLevel
+	self:Tag(level, '[nifty:level]')
+	
+	self.Level = level
+	
+	
+	if UnitSpecific[unit] then
+		UnitSpecific[unit](self, unit)
+	end
+	
+	self.PostCreateAuraIcon = auraIcon
+	self.SetAuraPosition = auraOffset
+	
+	return self
+end
+
+
+local layout = function(self, unit)
+
 	
 	-- ------------------------------------
 	-- player
@@ -483,7 +641,7 @@ local func = function(self, unit)
         self.Serendipity:SetTextColor(0, 0.81, 1)
         self.Serendipity:SetShadowOffset(1, -1)
         self.Serendipity:SetJustifyH("RIGHT")
-        self:Tag(self.Serendipity, '[Serendipity]')
+--        self:Tag(self.Serendipity, '[Serendipity]')
         
         
 		--
@@ -829,77 +987,38 @@ end
 --
 -- normal frames
 --
-oUF:RegisterStyle("Nifty", func)
+-- oUF:RegisterStyle("Nifty", func)
+-- 
+-- oUF:SetActiveStyle("Nifty")
+-- local player = oUF:Spawn("player", "oUF_Player")
+-- player:SetPoint("CENTER", -335, -106)
+-- local target = oUF:Spawn("target", "oUF_Target")
+-- target:SetPoint("CENTER", 335, -106) 
+-- local pet = oUF:Spawn("pet", "oUF_Pet")
+-- pet:SetPoint("BOTTOMLEFT", player, 0, -30)
+-- local tot = oUF:Spawn("targettarget", "oUF_TargetTarget")
+-- tot:SetPoint("TOPRIGHT", target, 0, 35)
+-- local focus	= oUF:Spawn("focus", "oUF_Focus")
+-- focus:SetPoint("BOTTOMRIGHT", player, 0, -30) 
 
-oUF:SetActiveStyle("Nifty")
-local player = oUF:Spawn("player", "oUF_Player")
-player:SetPoint("CENTER", -335, -106)
-local target = oUF:Spawn("target", "oUF_Target")
-target:SetPoint("CENTER", 335, -106) 
-local pet = oUF:Spawn("pet", "oUF_Pet")
-pet:SetPoint("BOTTOMLEFT", player, 0, -30)
-local tot = oUF:Spawn("targettarget", "oUF_TargetTarget")
-tot:SetPoint("TOPRIGHT", target, 0, 35)
-local focus	= oUF:Spawn("focus", "oUF_Focus")
-focus:SetPoint("BOTTOMRIGHT", player, 0, -30) 
---OUFN_FT	= oUF:Spawn("focusTarget", "oUF_FocusTarget")
---OUFN_FT:SetPoint("BOTTOMRIGHT", player, 200, -220) 
 
---self.reputation:Show()
+oUF:RegisterStyle('Nifty', Shared)
+-- for unit, layout in next, UnitSpecific do 
+-- 	oUF:RegisterStyle('Nifty - ' .. unit:gsub("^%l", string.upper), layout)
+-- end
 
---
--- Hiding the party frames
---
-HidePartyFrame()
+local function spawn(self, unit, ...)
+	self:SetActiveStyle('Nifty')
+	local obj = self:Spawn(unit)
+	obj:SetPoint(...)
 
---[[
---
--- party
---
-local party	= oUF:Spawn("header", "oUF_Party")
-party:SetManyAttributes("showParty", true, "yOffset", -15)
-party:SetPoint("TOPLEFT", 35, -200)
-party:Show()
-party:SetAttribute("showRaid", false)
-
---
--- raid
---
-local Raid = {}
-for i = 1, NUM_RAID_GROUPS do
-	local RaidGroup = oUF:Spawn("header", "oUF_Raid" .. i)
-	RaidGroup:SetAttribute("groupFilter", tostring(i))
-	RaidGroup:SetAttribute("showRaid", true)
-	RaidGroup:SetAttribute("yOffset", -10)
-	RaidGroup:SetAttribute("point", "TOP")
-	RaidGroup:SetAttribute("showRaid", true)
-	table.insert(Raid, RaidGroup)
-	if i == 1 then
-		RaidGroup:SetPoint("TOPLEFT", UIParent, 35, -35) 
-	else
-		RaidGroup:SetPoint("TOPLEFT", Raid[i-1], "TOPRIGHT", 10, 0)	
-	end
-	RaidGroup:Show()
+	return obj
 end
 
---
--- party toggle in raid
---
-local partyToggle = CreateFrame('Frame')
-partyToggle:RegisterEvent('PLAYER_LOGIN')
-partyToggle:RegisterEvent('RAID_ROSTER_UPDATE')
-partyToggle:RegisterEvent('PARTY_LEADER_CHANGED')
-partyToggle:RegisterEvent('PARTY_MEMBER_CHANGED')
-partyToggle:SetScript('OnEvent', function(self)
-	if(InCombatLockdown()) then
-		self:RegisterEvent('PLAYER_REGEN_ENABLED')
-	else
-		self:UnregisterEvent('PLAYER_REGEN_DISABLED')
-		if(HIDE_PARTY_INTERFACE == "1" and GetNumRaidMembers() > 0) then
-			party:Hide()
-		else
-			party:Show()
-		end
-	end
+oUF:Factory( function (self) 
+	spawn(self, 'player', 'CENTER', -200, 0)
+	spawn(self, 'target', 'CENTER', 200, 0)
+	spawn(self, 'focus', 'CENTER', -142.5, -30)
+	spawn(self, 'pet', 'CENTER', -200, -30)
 end)
-]]
+
