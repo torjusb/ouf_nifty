@@ -621,14 +621,14 @@ local func = function(self, unit)
 	if unit=="targettarget" or unit=="focus" or unit=="focusTarget" then
 		self:SetWidth(120)
 		self:SetHeight(18)
-		self.Health:SetHeight(18)
-		self.Power:Hide()
+		self.Health:SetHeight(14)
+		--self.Power:Hide()
 		self.Power.value:Hide()
 		self.Health.value:SetPoint("RIGHT", 0, 9)
 		--self.Health.value:Hide()
 		self.Name:SetWidth(80)
 		self.Name:SetHeight(18)
-		
+
 		--
 		-- raid target icons
 		--
@@ -638,6 +638,7 @@ local func = function(self, unit)
 		self.RaidIcon:SetPoint("RIGHT", self, 22, 0)
 		self.RaidIcon:SetTexture"Interface\\TargetingFrame\\UI-RaidTargetingIcons"
 		
+
 		--
 		-- oUF_BarFader
 		--
