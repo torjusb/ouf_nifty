@@ -407,7 +407,11 @@ end
 -- ------------------------------------------------------------------------
 
 local UnitSpecific = {
-	player = function (self, ...)	
+	player = function (self, ...)
+		self.Level:Hide()
+		
+		self.Power.value:Show()
+	
         -- Serendipity counter
         self.Serendipity = self:CreateFontString(nil, "OVERLAY")
         self.Serendipity:SetPoint("LEFT", self, "RIGHT", 10, 0)
@@ -416,8 +420,6 @@ local UnitSpecific = {
         self.Serendipity:SetShadowOffset(1, -1)
         self.Serendipity:SetJustifyH("RIGHT")
 		self:Tag(self.Serendipity, '[nifty:serendipity]')
-		
-		self.Power.value:Show()
 	end,
 	
 	target = function (self, ...)
