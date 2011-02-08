@@ -55,7 +55,6 @@ local targetCastBar_y = -200
 local colors = setmetatable({
 	health = {.45, .73, .27},
 	power = setmetatable({
-		['MANA'] = {.27, .53, .73},
 		['RAGE'] = {.73, .27, .27}
 	}, {__index = oUF.colors.power})
 }, {__index = oUF.colors})
@@ -533,7 +532,6 @@ local Shared = function (self, unit, isSingle)
 	self.Power.colorClass = true 
 	self.Power.colorPower = true 
 	self.Power.colorHappiness = false  
-	self.PostUpdatePower = updatePower -- let the colors be  
 
 	--
 	-- names
