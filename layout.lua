@@ -48,18 +48,6 @@ local playerCastBar_y = -300
 local targetCastBar_x = 11
 local targetCastBar_y = -200
 
-oUF.Tags['[Serendipity]'] = function(u)
-    local _, _, _, count = UnitAura("player", "Serendipity"); return "" and count --'|cff0080ff.|r'
-end
-oUF.TagEvents['[Serendipity]'] = 'UNIT_AURA'
-
-
-local function SerendipityUpdate()
-    local _, _, _, count = UnitAura("player", "Serendipity")
-    self.Serendipity:SetText(count)
-end
-
-
 -- ------------------------------------------------------------------------
 -- change some colors :)
 -- ------------------------------------------------------------------------
@@ -168,6 +156,16 @@ oUF.Tags['nifty:level'] = function (unit)
 end
 
 -- ------------------------------------------------------------------------
+-- serendipity update
+-- ------------------------------------------------------------------------
+
+oUF.Tags['nifty:serendipity'] = function(u)
+    local _, _, _, count = UnitAura("player", "Serendipity"); return "" and count --'|cff0080ff.|r'
+end
+oUF.TagEvents['nifty:serendipity'] = "UNIT_AURA"
+
+
+-- ------------------------------------------------------------------------
 -- name update
 -- ------------------------------------------------------------------------
 local updateName = function(self, event, unit)
@@ -261,10 +259,10 @@ oUF.Tags['nifty:health'] = function (unit)
 	local tagValue
 	
 	if unit == "player" then
-		if curHp == maxHp then
+		if curHp ~= maxHp then
 			tagValue = "|cff33EE44" .. numberize(curHp) .. "|r"
 		else
-			tagValue = ""
+			return "";
 		end
 	elseif unit == "targettarget" or unit == "focus" then
 		tagValue = deficitHp .. "%"
@@ -292,7 +290,7 @@ oUF.Tags['nifty:health'] = function (unit)
 		
 	return tagValue
 end
---oUF.TagEvents['nifty:health'] = oUF.TagEvents.missinghp
+oUF.TagEvents['nifty:health'] = oUF.TagEvents.missinghp
 
 
 -- ------------------------------------------------------------------------
@@ -381,8 +379,6 @@ oUF.Tags['nifty:power'] = function (unit)
 		end
 	end
 	
-	print(tagValue)
-	
 	return tagValue
 end
 oUF.TagEvents['nifty:power'] = oUF.TagEvents.missingpp
@@ -419,12 +415,22 @@ local UnitSpecific = {
         self.Serendipity:SetTextColor(0, 0.81, 1)
         self.Serendipity:SetShadowOffset(1, -1)
         self.Serendipity:SetJustifyH("RIGHT")
-		-- self:Tag(self.Serendipity, '[Serendipity]')
+		self:Tag(self.Serendipity, '[nifty:serendipity]')
+		
+		self.Power.value:Show()
 	end,
 	
 	target = function (self, ...)
 	
-	end
+	end,
+	
+	focus = function (self, ...)
+		self:SetWidth(120)
+		self:SetHeight(18)
+		
+		self.Health:SetHeight(15)
+		self.Power:SetHeight(2)
+	end,
 }
 
 local Shared = function (self, unit, isSingle)
@@ -469,7 +475,7 @@ local Shared = function (self, unit, isSingle)
 	
 	-- Healthbar text
 	local healthValue = self.Health:CreateFontString(nil, "OVERLAY")
-	healthValue:SetPoint("RIGHT", -2, 2)
+	healthValue:SetPoint("RIGHT", self.Health, 0, 9)
 	healthValue:SetFont(font, fontsize, "OUTLINE")
 	healthValue:SetTextColor(1,1,1)
 	healthValue:SetShadowOffset(1, -1)
@@ -507,11 +513,11 @@ local Shared = function (self, unit, isSingle)
 
 	-- powerbar text
 	local powerValue = self.Power:CreateFontString(nil, "OVERLAY")
-    powerValue:SetPoint("RIGHT", self.Health.value, "BOTTOMRIGHT", 0, -5) -- powerbar text in health box
+    powerValue:SetPoint("RIGHT", self.Power, "RIGHT", 0, 0) -- powerbar text in health box
 	powerValue:SetFont(font, fontsize, "OUTLINE")
 	powerValue:SetTextColor(1,1,1)
 	powerValue:SetShadowOffset(1, -1)
-    --powerValue:Hide()
+    powerValue:Hide()
 	self:Tag(powerValue, '[nifty:power]')
 
 	self.Power.value = powerValue
@@ -1016,9 +1022,9 @@ local function spawn(self, unit, ...)
 end
 
 oUF:Factory( function (self) 
-	spawn(self, 'player', 'CENTER', -200, 0)
-	spawn(self, 'target', 'CENTER', 200, 0)
-	spawn(self, 'focus', 'CENTER', -142.5, -30)
-	spawn(self, 'pet', 'CENTER', -200, -30)
+	local player = spawn(self, 'player', 'CENTER', -200, 0)
+	local target = spawn(self, 'target', 'CENTER', 200, 0)
+	spawn(self, 'focus', 'RIGHT', player, 0, -35)
+	spawn(self, 'pet', 'LEFT', player, 0, -35)
 end)
 
