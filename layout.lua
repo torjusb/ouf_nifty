@@ -284,6 +284,14 @@ local UnitSpecific = {
 		self.Health:SetHeight(15)
 		self.Power:SetHeight(2)
 	end,
+	
+	targettarget = function (self, ...)
+		self:SetWidth(120)
+		self:SetHeight(18)
+		
+		self.Health:SetHeight(15)
+		self.Power:SetHeight(2)
+	end,
 }
 
 local Shared = function (self, unit, isSingle)
@@ -351,8 +359,8 @@ local Shared = function (self, unit, isSingle)
 	self.Power:SetHeight(3)
 	self.Power:SetStatusBarTexture(bartex)
 	self.Power:SetParent(self)
-	self.Power:SetPoint"LEFT"
-	self.Power:SetPoint"RIGHT"
+	self.Power:SetPoint "LEFT"
+	self.Power:SetPoint "RIGHT"
 	self.Power:SetPoint("TOP", self.Health, "BOTTOM", 0, -1) -- Little offset to make it pretty
 
 	--
@@ -847,5 +855,6 @@ oUF:Factory( function (self)
 	local target = spawn(self, 'target', 'CENTER', 335, -106)
 	spawn(self, 'focus', 'RIGHT', player, 0, -30)
 	spawn(self, 'pet', 'LEFT', player, 0, -30)
+	spawn(self, "targettarget", "TOPRIGHT", target, 0, 35)
 end)
 
