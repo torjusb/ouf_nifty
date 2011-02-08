@@ -152,60 +152,6 @@ local updateName = function(self, event, unit)
     end
 end
 
-
--- ------------------------------------------------------------------------
--- health update
--- ------------------------------------------------------------------------
-local updateHealth = function(self, event, unit, bar, min, max)  
-    local cur, maxhp = min, max
-	local missing = maxhp-cur
-	local isfriend = UnitIsFriend("player", "target")
-    local unitLvl = UnitLevel("target")
-    
-    local d = floor(cur/maxhp*100)
-    
-	if(UnitIsDead(unit) or UnitIsGhost(unit)) then
-		bar:SetValue(0)
-		bar.value:SetText"dead"
-	elseif(not UnitIsConnected(unit)) then
-		bar.value:SetText"offline"
-    elseif(unit == "player") then
-		if(min ~= max) then
-			bar.value:SetText("|cff33EE44"..numberize(cur) .."|r"--[[.. d.."%"]])
-		else
-			bar.value:SetText(" ")
-		end
-	elseif(unit == "targettarget" or unit == "focus") then
-		bar.value:SetText(d.."%")
-    elseif(unit == "target") then
-		if(d < 100 and isfriend) then
-			bar.value:SetText("|cffff7f74-"..missing.."|r |cff33EE44"..numberize(cur).."/"..numberize(maxhp).."|r"--[[..d.."%"]])       
-		elseif(d < 100) then
-			bar.value:SetText("|r |cff33EE44"..numberize(cur).."/"..numberiz(maxhp).."|r |cff33EE44"..d.."%|r")
-			-- bar.value:SetText("|r |cff33EE44"..numberize(cur).."/"..numberize(maxhp).."|r")
-		else
-			bar.value:SetText("|cff33EE44"..numberize(maxhp).."|r")
-		end
-
-	elseif(min == max) then
-        if unit == "pet" then
-			bar.value:SetText(" ") -- just here if otherwise wanted
-		else
-			bar.value:SetText(" ")
-		end
-    else
-        if((max-min) < max) then
-			if unit == "pet" then
-				bar.value:SetText("-"..maxhp-cur) -- negative values as for party, just here if otherwise wanted
-			else
-				bar.value:SetText("-"..maxhp-cur) -- this makes negative values (easier as a healer)
-			end
-	    end
-    end
-
-    self:UNIT_NAME_UPDATE(event, unit)
-end
-
 oUF.Tags['nifty:health'] = function (unit)	
 	if not UnitIsConnected(unit) or UnitIsDead(unit) or UnitIsGhost(unit) then 
 		return
@@ -229,10 +175,9 @@ oUF.Tags['nifty:health'] = function (unit)
 	elseif unit == "target" then
 		if percentHp < 100 and isFriend then
 			tagValue = "|cffff7f74" .. deficitHp .. "|r |cff33EE44" .. numberize(cur) .. "/" .. numberize(maxHp) .. "|r"
-		elseif unitLvl == -1 then
-			tagValue = "|r |cff33EE44" .. numberize(curHp) .. "|r |cff33EE44" .. percentHp .."%|r"
 		elseif percentHp < 100 then
-			tagValue = "|r |cff33EE44" .. numberize(curHp) .. "/" .. numberize(maxHp) .. "|r"
+			tagValue = "|r |cff33EE44" .. numberize(curHp) .. "/" .. numberize(maxHp) .. "|r |cff33EE44" .. percentHp .. "%|r"
+			-- tagValue = "|r |cff33EE44" .. numberize(curHp) .. "/" .. numberize(maxHp) .. "|r"
 		else
 			tagValue = "|cff33EE44" .. numberize(maxHp) .. "|r"
 		end
@@ -398,7 +343,6 @@ local Shared = function (self, unit, isSingle)
 	self.Health.colorReaction = true 
 	self.Health.colorDisconnected = true 
 	self.Health.colorTapping = true  
-	self.PostUpdateHealth = updateHealth -- let the colors be  
 
 	--
 	-- powerbar
