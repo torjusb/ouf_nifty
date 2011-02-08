@@ -497,7 +497,7 @@ local Shared = function (self, unit, isSingle)
 	--
 	-- powerbar
 	--
-	self.Power = CreateFrame"StatusBar"
+	self.Power = CreateFrame "StatusBar"
 	self.Power:SetHeight(3)
 	self.Power:SetStatusBarTexture(bartex)
 	self.Power:SetParent(self)
@@ -515,7 +515,7 @@ local Shared = function (self, unit, isSingle)
 
 	-- powerbar text
 	local powerValue = self.Power:CreateFontString(nil, "OVERLAY")
-    powerValue:SetPoint("RIGHT", self.Power, "RIGHT", 0, 0) -- powerbar text in health box
+    powerValue:SetPoint("LEFT", self.Health, 0, 9) -- powerbar text in health box
 	powerValue:SetFont(font, fontsize, "OUTLINE")
 	powerValue:SetTextColor(1,1,1)
 	powerValue:SetShadowOffset(1, -1)
