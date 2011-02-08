@@ -87,44 +87,6 @@ local numberize = function(v)
 	end
 end
 
--- ------------------------------------------------------------------------
--- level update
--- ------------------------------------------------------------------------
-local updateLevel = function(self, unit, name)
-	local lvl = UnitLevel(unit)
-	local typ = UnitClassification(unit)
-	
-	local color = GetQuestDifficultyColor(lvl)  
-        
-	if lvl <= 0 then	lvl = "??" end
-            
-	if typ=="worldboss" then
-	    self.Level:SetText("|cffff0000"..lvl.."b|r")
-	elseif typ=="rareelite" then
-	    self.Level:SetText(lvl.."r+")
-		self.Level:SetTextColor(color.r, color.g, color.b)
-	elseif typ=="elite" then
-	    self.Level:SetText(lvl.."+")
-		self.Level:SetTextColor(color.r, color.g, color.b)
-	elseif typ=="rare" then
-		self.Level:SetText(lvl.."r")
-		self.Level:SetTextColor(color.r, color.g, color.b)
-	else
-		if UnitIsConnected(unit) == nil then
-			self.Level:SetText("??")
-		else
-			self.Level:SetText(lvl)
-		end
-		if(not UnitIsPlayer(unit)) then  
-			self.Level:SetTextColor(color.r, color.g, color.b)
-		else
-			local _, class = UnitClass(unit) 
-			color = self.colors.class[class] 
-			self.Level:SetTextColor(color[1], color[2], color[3])  
-		end			
-	end
-end
-
 oUF.Tags['nifty:level'] = function (unit)
 	local lvl = UnitLevel(unit)
 	local class = UnitClassification(unit)
@@ -290,60 +252,6 @@ oUF.Tags['nifty:health'] = function (unit)
 	return tagValue
 end
 oUF.TagEvents['nifty:health'] = oUF.TagEvents.missinghp
-
-
--- ------------------------------------------------------------------------
--- power update
--- ------------------------------------------------------------------------
-local updatePower = function(self, event, unit, bar, min, max)  
-	if UnitIsPlayer(unit)==nil then 
-		bar.value:SetText()
-	else
-		local _, ptype = UnitPowerType(unit)
-		local color = oUF.colors.power[ptype]
-		if(min==0) then 
-			bar.value:SetText()
-		elseif(UnitIsDead(unit) or UnitIsGhost(unit)) then
-			bar:SetValue(0)
-		elseif(not UnitIsConnected(unit)) then
-			bar.value:SetText()
-		elseif unit=="player" then 
-			if((max-min) > 0) then
-	            bar.value:SetText(min)
-				if color then
-					bar.value:SetTextColor(color[1], color[2], color[3])
-				else
-					bar.value:SetTextColor(0.2, 0.66, 0.93)
-				end
-			elseif(min==max) then
-				bar.value:SetText("")
-	        else
-				bar.value:SetText(min)
-				if color then
-					bar.value:SetTextColor(color[1], color[2], color[3])
-				else
-					bar.value:SetTextColor(0.2, 0.66, 0.93)
-				end
-			end
-        else
-			if((max-min) > 0) then
-				bar.value:SetText(min)
-				if color then
-					bar.value:SetTextColor(color[1], color[2], color[3])
-				else
-					bar.value:SetTextColor(0.2, 0.66, 0.93)
-				end
-			else
-				bar.value:SetText(min)
-				if color then
-					bar.value:SetTextColor(color[1], color[2], color[3])
-				else
-					bar.value:SetTextColor(0.2, 0.66, 0.93)
-				end
-			end
-		end
-	end
-end
 
 oUF.Tags['nifty:power'] = function (unit)
 	if not UnitIsConnected(unit) or UnitIsDead(unit) or UnitIsGhost(unit) then 
