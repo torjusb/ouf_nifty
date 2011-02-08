@@ -179,11 +179,10 @@ local updateHealth = function(self, event, unit, bar, min, max)
 		bar.value:SetText(d.."%")
     elseif(unit == "target") then
 		if(d < 100 and isfriend) then
-			bar.value:SetText("|cffff7f74-"..missing.."|r |cff33EE44"..numberize(cur).."/"..numberize(maxhp).."|r"--[[..d.."%"]])
-        elseif(unitLvl == -1) then
-            bar.value:SetText("|r |cff33EE44"..numberize(cur).."|r |cff33EE44"..d.."%|r")
+			bar.value:SetText("|cffff7f74-"..missing.."|r |cff33EE44"..numberize(cur).."/"..numberize(maxhp).."|r"--[[..d.."%"]])       
 		elseif(d < 100) then
-			bar.value:SetText("|r |cff33EE44"..numberize(cur).."/"..numberize(maxhp).."|r")
+			bar.value:SetText("|r |cff33EE44"..numberize(cur).."/"..numberiz(maxhp).."|r |cff33EE44"..d.."%|r")
+			-- bar.value:SetText("|r |cff33EE44"..numberize(cur).."/"..numberize(maxhp).."|r")
 		else
 			bar.value:SetText("|cff33EE44"..numberize(maxhp).."|r")
 		end
