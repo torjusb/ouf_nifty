@@ -189,7 +189,7 @@ oUF.Tags['nifty:health'] = function (unit)
 			return "";
 		end
 	elseif unit == "targettarget" or unit == "focus" then
-		tagValue = deficitHp .. "%"
+		tagValue = percentHp .. "%"
 	elseif unit == "target" then
 		if percentHp < 100 and isFriend then
 			tagValue = "|cffff7f74" .. deficitHp .. "|r |cff33EE44" .. numberize(curHp) .. "/" .. numberize(maxHp) .. "|r"
