@@ -78,6 +78,7 @@ end
 -- ------------------------------------------------------------------------
 local numberize = function(v)
 	if v <= 999 then return v end
+	
 	if v >= 1000000 then
 		local value = string.format("%.1fm", v/1000000)
 		return value
@@ -151,6 +152,23 @@ local updateName = function(self, event, unit)
 		updateLevel(self, unit, name)      
     end
 end
+
+oUF.Tags['nifty:name'] = function (unit)
+	local name = UnitName(unit)
+	
+	--[[
+	if unit == "targettarget" then
+		local playerName = UnitName("player")
+		
+		if name == playerName then
+			tagValue = "" -- @TODO: Color SetTextColor(0.9, 0.5, 0.2)
+		end
+	end
+	]]
+	
+	return string.lower(name or "")
+end
+oUF.TagEvents['nifty:health'] = oUF.TagEvents.name
 
 oUF.Tags['nifty:health'] = function (unit)	
 	if not UnitIsConnected(unit) or UnitIsDead(unit) or UnitIsGhost(unit) then 
@@ -258,9 +276,7 @@ end
 -- ------------------------------------------------------------------------
 
 local UnitSpecific = {
-	player = function (self, ...)
-		self.Level:Hide()
-		
+	player = function (self, ...)	
 		self.Power.value:Show()
 	
         -- Serendipity counter
@@ -274,10 +290,22 @@ local UnitSpecific = {
 	end,
 	
 	target = function (self, ...)
-	
+		self:Tag(self.Name, '[nifty:level] [nifty:name]')
 	end,
 	
 	focus = function (self, ...)
+		self:Tag(self.Name, '[nifty:name]')
+		
+		self:SetWidth(120)
+		self:SetHeight(18)
+		
+		self.Health:SetHeight(15)
+		self.Power:SetHeight(2)
+	end,
+	
+	pet = function (self, ...)
+		self:Tag(self.Name, '[nifty:name]')
+		
 		self:SetWidth(120)
 		self:SetHeight(18)
 		
@@ -286,6 +314,8 @@ local UnitSpecific = {
 	end,
 	
 	targettarget = function (self, ...)
+		self:Tag(self.Name, '[nifty:name]')
+	
 		self:SetWidth(120)
 		self:SetHeight(18)
 		
@@ -382,9 +412,7 @@ local Shared = function (self, unit, isSingle)
 
 	self.Power.value = powerValue
     
-    --
 	-- powerbar functions
-	--
 	self.Power.frequentUpdates = true
 	self.Power.colorTapping = true 
 	self.Power.colorDisconnected = true 
@@ -392,28 +420,15 @@ local Shared = function (self, unit, isSingle)
 	self.Power.colorPower = true 
 	self.Power.colorHappiness = false  
 
-	--
 	-- names
-	--
-	self.Name = self.Health:CreateFontString(nil, "OVERLAY")
-    self.Name:SetPoint("LEFT", self, 0, 9)
-    self.Name:SetJustifyH"LEFT"
-	self.Name:SetFont(font, fontsize, "OUTLINE")
-	self.Name:SetShadowOffset(1, -1)
-    self.UNIT_NAME_UPDATE = updateName
-
-	-- level
-	local level = self.Health:CreateFontString(nil, "OVERLAY")
-	level = self.Health:CreateFontString(nil, "OVERLAY")
-	level:SetPoint("LEFT", self.Health, 0, 9)
-	level:SetJustifyH("LEFT")
-	level:SetFont(font, fontsize, "OUTLINE")
-    level:SetTextColor(1,1,1)
-	level:SetShadowOffset(1, -1)
-	--self.UNIT_LEVEL = updateLevel
-	self:Tag(level, '[nifty:level]')
+	local name = self.Health:CreateFontString(nil, "OVERLAY")
+	name = self.Health:CreateFontString(nil, "OVERLAY")
+    name:SetPoint("LEFT", self, 0, 9)
+    name:SetJustifyH("LEFT")
+	name:SetFont(font, fontsize, "OUTLINE")
+	name:SetShadowOffset(1, -1)
 	
-	self.Level = level
+	self.Name = name
 	
 	
 	if UnitSpecific[unit] then
