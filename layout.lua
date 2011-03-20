@@ -129,7 +129,9 @@ end
 -- ------------------------------------------------------------------------
 
 oUF.Tags['nifty:serendipity'] = function(u)
-    local _, _, _, count = UnitAura("player", "Serendipity"); return "" and count --'|cff0080ff.|r'
+    local _, _, _, count = UnitAura("player", "Serendipity")
+	
+	return count and "|cff0080ff" .. count .. "|r"
 end
 oUF.TagEvents['nifty:serendipity'] = "UNIT_AURA"
 
