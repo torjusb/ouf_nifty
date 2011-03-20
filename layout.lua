@@ -11,10 +11,17 @@
 				p3lim for party toggle function
 
 --]]
-local backdrop = {
-	bgFile = [=[Interface\ChatFrame\ChatFrameBackground]=],
-	insets = {top = -1, left = -1, bottom = -1, right = -1},
-}
+
+local backdrop
+do
+	local ins = -1
+	
+	backdrop = {
+		bgFile = [=[Interface\ChatFrame\ChatFrameBackground]=],
+		insets = {top = ins, left = ins, bottom = ins, right = ins},
+	}
+end
+
 --local texture = [=[Interface\AddOns\oUF_P3lim\minimalist]=]
 -- ------------------------------------------------------------------------
 -- local horror
@@ -202,7 +209,7 @@ oUF.Tags['nifty:health'] = function (unit)
 	elseif curHp == maxHp then
 		tagValue = "" -- maybe pet condition here?
 	else
-		if (maxHp - curHp) < maxHp then
+		if (maxHp - curHp) < maxHp then	
 			if unit == "pet" then
 				tagValue = "-" .. maxHp - curHp
 			else
@@ -255,20 +262,14 @@ oUF.TagEvents['nifty:power'] = oUF.TagEvents.missingpp
 -- ------------------------------------------------------------------------
 -- aura reskin
 -- ------------------------------------------------------------------------
-local auraIcon = function(self, button, icons)
-	icons.showDebuffType = true -- show debuff border type color  
-	
-	button.icon:SetTexCoord(.07, .93, .07, .93)
-	button.icon:SetPoint("TOPLEFT", button, "TOPLEFT", 1, -1)
-	button.icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 1)
-	
-	button.overlay:SetTexture(bufftex)
-	button.overlay:SetTexCoord(0,1,0,1)
-	button.overlay.Hide = function(self) self:SetVertexColor(0.3, 0.3, 0.3) end
+local PostCreateIcon = function(element, button)
+	button:SetBackdrop( backdrop )
+	button:SetBackdropColor(0, 0, 0)
 	
 	button.cd:SetReverse()
-	button.cd:SetPoint("TOPLEFT", button, "TOPLEFT", 2, -2) 
-	button.cd:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, 2)     
+	
+	button.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+	button.icon:SetDrawLayer('ARTWORK')
 end
 
 -- ------------------------------------------------------------------------
@@ -291,6 +292,40 @@ local UnitSpecific = {
 	
 	target = function (self, ...)
 		self:Tag(self.Name, '[nifty:level] [nifty:name]')
+		
+		--[[ Buffs ]]--
+		local buffs = CreateFrame("Frame", nil, self) 
+		buffs.size = 20
+		
+		buffs:SetHeight( buffs.size )
+		buffs:SetWidth( buffs.size * 6)
+		buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -1, 15)
+		
+		buffs.initialAnchor = "BOTTOMLEFT"
+		buffs["growth-y"] = "TOP"
+		buffs.num = 20
+		buffs.spacing = 4
+		
+		self.Buffs = buffs
+		self.Buffs.PostCreateIcon = PostCreateIcon
+		
+		--[[ Debuffs ]]--
+		local debuffs = CreateFrame("Frame", nil, self)
+		debuffs.size = 25
+		
+		debuffs:SetHeight( debuffs.size )
+		debuffs:SetWidth( debuffs.size * 9 )
+		debuffs:SetPoint("TOPLEFT", self, "BOTTOMLEFT", -1, -6)
+		
+		debuffs.initialAnchor = "TOPLEFT"
+		debuffs["growth-y"] = "DOWN"
+		debuffs.filter = false
+		debuffs.num = 20
+		debuffs.spacing = 4
+		
+		self.Debuffs = debuffs
+		
+		self.Debuffs.PostCreateIcon = PostCreateIcon
 	end,
 	
 	focus = function (self, ...)
@@ -434,10 +469,7 @@ local Shared = function (self, unit, isSingle)
 	if UnitSpecific[unit] then
 		UnitSpecific[unit](self, unit)
 	end
-	
-	self.PostCreateAuraIcon = auraIcon
-	self.SetAuraPosition = auraOffset
-	
+			
 	return self
 end
 
