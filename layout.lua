@@ -286,13 +286,21 @@ oUF.TagEvents['nifty:power'] = oUF.TagEvents.missingpp
 -- aura reskin
 -- ------------------------------------------------------------------------
 local PostCreateIcon = function(element, button)
-	button:SetBackdrop( backdrop )
-	button:SetBackdropColor(0, 0, 0)
-	
+	element.showDebuffType = true
+
+	button.icon:SetTexCoord(.07, .93, .07, .93)
+	button.icon:SetPoint("TOPLEFT", button, "TOPLEFT", 1, -1)
+	button.icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 1)
+
+	button.overlay:SetTexture( bufftex )
+	button.overlay:SetTexCoord(0, 1, 0, 1)
+	button.overlay.Hide = function (self)
+		self:SetVertexColor(0.3, 0.3, 0.3)
+	end
+
 	button.cd:SetReverse()
-	
-	button.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-	button.icon:SetDrawLayer('ARTWORK')
+	button.cd:SetPoint("TOPLEFT", button, "TOPLEFT", 2, -2) 
+	button.cd:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, 2)   
 end
 
 -- ------------------------------------------------------------------------
@@ -318,16 +326,16 @@ local UnitSpecific = {
 		
 		--[[ Buffs ]]--
 		local buffs = CreateFrame("Frame", nil, self) 
-		buffs.size = 20
+		buffs.size = 25
 		
 		buffs:SetHeight( buffs.size )
-		buffs:SetWidth( buffs.size * 6)
+		buffs:SetWidth( buffs.size * 5 )
 		buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -1, 15)
 		
 		buffs.initialAnchor = "BOTTOMLEFT"
 		buffs["growth-y"] = "TOP"
 		buffs.num = 20
-		buffs.spacing = 4
+		buffs.spacing = 3
 		
 		self.Buffs = buffs
 		self.Buffs.PostCreateIcon = PostCreateIcon
