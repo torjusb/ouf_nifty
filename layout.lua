@@ -144,6 +144,7 @@ oUF.Tags['nifty:level'] = function (unit)
 	
 	return tagValue
 end
+oUF.TagEvents['nifty:level'] = oUF.TagEvents.level
 
 -- ------------------------------------------------------------------------
 -- serendipity update
