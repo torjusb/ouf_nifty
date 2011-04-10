@@ -199,7 +199,7 @@ oUF.Tags['nifty:name'] = function (unit)
 	
 	return string.lower(name or "")
 end
-oUF.TagEvents['nifty:health'] = oUF.TagEvents.name
+oUF.TagEvents['nifty:name'] = oUF.TagEvents.name
 
 oUF.Tags['nifty:health'] = function (unit)	
 	if not UnitIsConnected(unit) or UnitIsDead(unit) or UnitIsGhost(unit) then 
