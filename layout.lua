@@ -381,6 +381,7 @@ local UnitSpecific = {
 		
 		self.Castbar = castbar
 		
+		
 		local leader = self.Health:CreateTexture(nil, "OVERLAY")
 		leader:SetHeight(12)
 		leader:SetWidth(12)
@@ -388,6 +389,15 @@ local UnitSpecific = {
 		leader:SetTexture"Interface\\GroupFrame\\UI-Group-LeaderIcon"
 		
 		self.Leader = leader
+		
+		
+		local raidIcon = self.Health:CreateTexture(nil, "OVERLAY")
+		raidIcon:SetHeight(16)
+		raidIcon:SetWidth(16)
+		raidIcon:SetPoint("TOP", self, 0, 9)
+		raidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+		
+		self.RaidIcon = raidIcon
 	end,
 	
 	target = function (self, ...)
