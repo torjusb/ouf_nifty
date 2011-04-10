@@ -497,6 +497,12 @@ local UnitSpecific = {
 		
 		self.Health:SetHeight(15)
 		self.Power:SetHeight(2)
+		
+		if playerClass == "HUNTER" then
+			self.Health.colorReaction = false
+			self.Health.colorClass = false
+			self.Health.colorHappiness = true  
+		end
 	end,
 	
 	targettarget = function (self, ...)
