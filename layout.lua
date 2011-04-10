@@ -308,6 +308,60 @@ end
 -- the layout starts here
 -- ------------------------------------------------------------------------
 
+local createCastbar = function(self)
+	local castbar = CreateFrame("StatusBar", nil, self)
+	
+	castbar:SetWidth(260)
+	castbar:SetHeight(24)
+			
+	castbar:SetStatusBarTexture(bartex)
+	castbar:SetStatusBarColor(1, .5, 0)
+	
+	castbar:SetBackdrop({
+		bgFile = "Interface\\ChatFrame\\ChatFrameBackground", 
+		tile = true,
+		tileSize = 16,
+		insets = {
+			left = -1,
+			right = -1,
+			top = -1,
+			bottom = -1
+		}
+	})
+	castbar:SetBackdropColor(0, 0, 0, .7)
+	
+	-- Background
+	castbar.bg = castbar:CreateTexture(nil, 'BORDER')
+	castbar.bg:SetAllPoints( castbar )
+	castbar.bg:SetTexture(0, 0, 0, 0.6)
+	
+	-- Text
+	castbar.Text = castbar:CreateFontString(nil, "OVERLAY")
+	castbar.Text:SetPoint("LEFT", castbar, 2, -1)
+	castbar.Text:SetFont(upperfont, 11)
+	castbar.Text:SetShadowOffset(1, -1)
+	castbar.Text:SetTextColor(1, 1, 1)
+	castbar.Text:SetJustifyH("LEFT")
+	
+	-- Time
+	castbar.Time = castbar:CreateFontString(nil, "OVERLAY")
+	castbar.Time:SetPoint("RIGHT", castbar, -2, 0)
+	castbar.Time:SetFont(upperfont, 11)
+	castbar.Time:SetShadowOffset(1, -1)
+	castbar.Time:SetTextColor(1, 1, 1)
+	castbar.Time:SetJustifyH("RIGHT")
+	
+	castbar.CustomTimeText = function (self, duration)
+		if self.casting then
+			self.Time:SetFormattedText("%.1f", self.max - duration)
+		elseif self.channeling then
+			self.Time:SetFormattedText("%.1f", duration)
+		end
+	end
+	
+	return castbar
+end
+
 local UnitSpecific = {
 	player = function (self, ...)	
 		self.Power.value:Show()
@@ -320,6 +374,12 @@ local UnitSpecific = {
         self.Serendipity:SetShadowOffset(1, -1)
         self.Serendipity:SetJustifyH("RIGHT")
 		self:Tag(self.Serendipity, '[nifty:serendipity]')
+		
+		-- Castbar
+		local castbar = createCastbar(self)
+		castbar:SetPoint("CENTER", UIParent, "CENTER", 0, -280)
+		
+		self.Castbar = castbar
 	end,
 	
 	target = function (self, ...)
@@ -358,6 +418,17 @@ local UnitSpecific = {
 		self.Debuffs = debuffs
 		
 		self.Debuffs.PostCreateIcon = PostCreateIcon
+		
+		
+		-- Castbar
+		local castbar = createCastbar(self)
+		castbar:SetPoint('CENTER', UIParent, 'CENTER', 0, 380)
+		
+		castbar:SetStatusBarColor(0.80, 0.01, 0)
+		castbar:SetHeight(24)
+		castbar:SetWidth(260)
+		
+		self.Castbar = castbar
 	end,
 	
 	focus = function (self, ...)
@@ -368,6 +439,16 @@ local UnitSpecific = {
 		
 		self.Health:SetHeight(15)
 		self.Power:SetHeight(2)
+		
+		-- Castbar
+		local castbar = createCastbar(self)
+		castbar:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -10)
+		
+		castbar:SetStatusBarColor(1, 0.50, 0)
+		castbar:SetHeight(18)
+		castbar:SetWidth(120)
+		
+		self.Castbar = castbar
 	end,
 	
 	pet = function (self, ...)
@@ -504,6 +585,7 @@ local Shared = function (self, unit, isSingle)
 			
 	return self
 end
+
 
 
 local layout = function(self, unit)
