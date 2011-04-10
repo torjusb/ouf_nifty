@@ -447,6 +447,26 @@ local UnitSpecific = {
 		castbar:SetWidth(260)
 		
 		self.Castbar = castbar
+		
+		
+		local raidIcon = self.Health:CreateTexture(nil, "OVERLAY")
+		raidIcon:SetHeight(16)
+		raidIcon:SetWidth(16)
+		raidIcon:SetPoint("TOP", self, 0, 9)
+		raidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+		
+		self.RaidIcon = raidIcon
+		
+		if playerClass == "ROGUE" or playerClass == "DRUID" then
+			local comboPoints = self:CreateFontString(nil, "OVERLAY")
+			comboPoints:SetPoint("RIGHT", self, "LEFT", -10, 0)
+			comboPoints:SetFont(font, 20, "OUTLINE")
+			comboPoints:SetTextColor(0, 0.81, 1)
+			comboPoints:SetShadowOffset(1, -1)
+			comboPoints:SetJustifyH"RIGHT" 
+			
+			self.CPoints = comboPoints
+		end
 	end,
 	
 	focus = function (self, ...)
