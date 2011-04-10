@@ -380,6 +380,14 @@ local UnitSpecific = {
 		castbar:SetPoint("CENTER", UIParent, "CENTER", 0, -280)
 		
 		self.Castbar = castbar
+		
+		local leader = self.Health:CreateTexture(nil, "OVERLAY")
+		leader:SetHeight(12)
+		leader:SetWidth(12)
+		leader:SetPoint("BOTTOMRIGHT", self, -2, 4)
+		leader:SetTexture"Interface\\GroupFrame\\UI-Group-LeaderIcon"
+		
+		self.Leader = leader
 	end,
 	
 	target = function (self, ...)
