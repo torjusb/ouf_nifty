@@ -12,6 +12,17 @@
 
 --]]
 
+--[[
+	
+	TODO:
+		- Color level text by class
+		- Name text overlaps health text when too long
+		- Hide pet name
+		- Color power text
+		- Pet health text is uncolored and only shows deficit
+	
+]]
+
 local backdrop
 do
 	local ins = -1
