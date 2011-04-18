@@ -15,7 +15,6 @@
 --[[
 	
 	TODO:
-		- Color level text by class
 		- Name text overlaps health text when too long
 		- Hide pet name
 		- Color power text
@@ -133,9 +132,19 @@ local numberize = function(v)
 	end
 end
 
+function RGBtoHex(r, g, b)
+	r = r <= 1 and r >= 0 and r or 0
+	g = g <= 1 and g >= 0 and g or 0
+	b = b <= 1 and b >= 0 and b or 0
+	
+	return string.format("%02x%02x%02x", r*255, g*255, b*255)
+end
+
+
 oUF.Tags['nifty:level'] = function (unit)
 	local lvl = UnitLevel(unit)
-	local class = UnitClassification(unit)
+	local classification = UnitClassification(unit)
+	local _, class = UnitClass(unit)
 	local color = GetQuestDifficultyColor(lvl)
 	local tagValue
 	
@@ -143,22 +152,30 @@ oUF.Tags['nifty:level'] = function (unit)
 		lvl = "??"
 	end
 	
-	if class == "worldboss" then
+	if classification == "worldboss" then
 		tagValue = "|cffff0000" .. lvl .. "b|r"
-	elseif class == "rareelite" then
+	elseif classification == "rareelite" then
 		tagValue = lvl .. "r+"
-	elseif class == "elite" then
+	elseif classification == "elite" then
 		tagValue = lvl .. "+"
-	elseif class == "rare" then
+	elseif classification == "rare" then
 		tagValue = lvl .. "r"
 	else
-		if UnitIsConnected(unit) == nil then
-			tagValue = "??"
+		if not UnitIsPlayer(unit) then
+			tagValue = "|cff" .. RGBtoHex(unpack(color))
 		else
-			tagValue = lvl
+			tagValue = "|cff" .. RGBtoHex(unpack(oUF.colors.class[ class ]))
 		end
+
+		if UnitIsConnected(unit) == nil then
+			tagValue = tagValue .. "??"
+		else
+			tagValue = tagValue .. lvl
+		end
+		
+		tagValue = tagValue .. "|r"
 	end
-	
+
 	return tagValue
 end
 oUF.TagEvents['nifty:level'] = oUF.TagEvents.level
