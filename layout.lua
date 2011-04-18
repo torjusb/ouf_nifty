@@ -16,7 +16,6 @@
 	
 	TODO:
 		- Name text overlaps health text when too long
-		- Hide pet name
 		- Color power text
 		- Pet health text is uncolored and only shows deficit
 	
@@ -162,8 +161,8 @@ oUF.Tags['nifty:level'] = function (unit)
 		tagValue = lvl .. "r"
 	else
 		if not UnitIsPlayer(unit) then
-			tagValue = "|cff" .. RGBtoHex(unpack(color))
-		else
+			tagValue = "|cff" .. RGBtoHex(color.r, color.g, color.b)
+		elseif oUF.colors.class[ class ] then
 			tagValue = "|cff" .. RGBtoHex(unpack(oUF.colors.class[ class ]))
 		end
 
@@ -496,9 +495,7 @@ local UnitSpecific = {
 		self.Castbar = castbar
 	end,
 	
-	pet = function (self, ...)
-		self:Tag(self.Name, '[nifty:name]')
-		
+	pet = function (self, ...)		
 		self:SetWidth(120)
 		self:SetHeight(18)
 		
