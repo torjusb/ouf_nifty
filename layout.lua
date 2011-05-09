@@ -65,11 +65,7 @@ end
 -- ------------------------------------------------------------------------
 -- change some colors :)
 -- ------------------------------------------------------------------------
-oUF.colors.happiness = {
-	[1] = {182/225, 34/255, 32/255},	-- unhappy
-	[2] = {220/225, 180/225, 52/225},	-- content
-	[3] = {143/255, 194/255, 32/255},	-- happy
-}
+
 --[[
 oUF.colors.reaction[1] = {r=182/255, g=34/255, b=32/255}
 oUF.colors.reaction[2] = {r=182/255, g=34/255, b=32/255}
@@ -611,10 +607,12 @@ local func = function(self, unit)
 		self.Level:Hide()
 		self.Name:Hide()
 		
+		--self.Health:SetStatusBarColor(oUF.colors.health)
+		
 		if playerClass=="HUNTER" then
-			self.Health.colorReaction = false
-			self.Health.colorClass = false
-			self.Health.colorHappiness = true  
+			self.Health.colorReaction = true
+			self.Health.colorClass = true
+			self.Health.colorHappiness = false  
 		end
 		
 		--
