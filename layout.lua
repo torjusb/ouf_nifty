@@ -388,10 +388,10 @@ local UnitSpecific = {
 		
 		--[[ Buffs ]]--
 		local buffs = CreateFrame("Frame", nil, self) 
-		buffs.size = 25
+		buffs.size = 23
 		
 		buffs:SetHeight( buffs.size )
-		buffs:SetWidth( buffs.size * 5 )
+		buffs:SetWidth( buffs.size * 5 + (5 * 3) )
 		buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -1, 15)
 		
 		buffs.initialAnchor = "BOTTOMLEFT"
@@ -404,7 +404,7 @@ local UnitSpecific = {
 		
 		--[[ Debuffs ]]--
 		local debuffs = CreateFrame("Frame", nil, self)
-		debuffs.size = 25
+		debuffs.size = 30
 		
 		debuffs:SetHeight( debuffs.size )
 		debuffs:SetWidth( debuffs.size * 9 )
