@@ -15,7 +15,6 @@
 --[[
 	
 	TODO:
-		- Color power text
 		- Pet health text is uncolored and only shows deficit
 	
 ]]
@@ -284,7 +283,7 @@ oUF.Tags['nifty:power'] = function (unit)
 		end
 	end
 	
-	return tagValue
+	return "|cff" .. RGBtoHex(0.2, 0.66, 0.93) .. tagValue .. "|r"
 end
 oUF.TagEvents['nifty:power'] = oUF.TagEvents.missingpp
 
