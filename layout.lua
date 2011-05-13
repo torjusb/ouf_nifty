@@ -15,7 +15,6 @@
 --[[
 	
 	TODO:
-		- Name text overlaps health text when too long
 		- Color power text
 		- Pet health text is uncolored and only shows deficit
 	
@@ -368,6 +367,11 @@ local createCastbar = function(self)
 	return castbar
 end
 
+local SmallUnit = function (self, ...)
+	self.Name:SetWidth(120)
+	self.Name:SetHeight(18)
+end
+
 local UnitSpecific = {
 	player = function (self, ...)	
 		self.Power.value:Show()
@@ -408,6 +412,9 @@ local UnitSpecific = {
 	
 	target = function (self, ...)
 		self:Tag(self.Name, '[nifty:level] [nifty:name]')
+		
+		self.Name:SetWidth(120)
+		self.Name:SetHeight(20)
 		
 		--[[ Buffs ]]--
 		local buffs = CreateFrame("Frame", nil, self) 
@@ -476,6 +483,8 @@ local UnitSpecific = {
 	end,
 	
 	focus = function (self, ...)
+		SmallUnit(self, ...)
+		
 		self:Tag(self.Name, '[nifty:name]')
 		
 		self:SetWidth(120)
@@ -495,7 +504,9 @@ local UnitSpecific = {
 		self.Castbar = castbar
 	end,
 	
-	pet = function (self, ...)		
+	pet = function (self, ...)
+		SmallUnit(self, ...)
+		
 		self:SetWidth(120)
 		self:SetHeight(18)
 		
@@ -510,6 +521,8 @@ local UnitSpecific = {
 	end,
 	
 	targettarget = function (self, ...)
+		SmallUnit(self, ...)
+		
 		self:Tag(self.Name, '[nifty:name]')
 	
 		self:SetWidth(120)
