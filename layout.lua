@@ -58,12 +58,6 @@ local colors = setmetatable({
 		["FUEL"] = { 0.0, 0.55, 0.5 },
 	}, {__index = oUF.colors.power}),
 	
-	happiness = setmetatable({
-		[1] = { 182/225, 34/255, 32/255 },	-- unhappy
-		[2] = { 220/225, 180/225, 52/225 },	-- content
-		[3] = { 143/255, 194/255, 32/255 },	-- happy
-	}, {__index = oUF.colors.happiness}),
-	
 	reaction = setmetatable({
 		[1] = { 182/255, 34/255, 32/255 },
 		[2] = { 182/255, 34/255, 32/255 },
@@ -490,9 +484,8 @@ local UnitSpecific = {
 		self.Power:SetHeight(2)
 		
 		if playerClass == "HUNTER" then
-			self.Health.colorReaction = false
-			self.Health.colorClass = false
-			self.Health.colorHappiness = true  
+			self.Health.colorReaction = true
+			self.Health.colorClass = true
 		end
 	end,
 	
@@ -612,7 +605,6 @@ local Shared = function (self, unit, isSingle)
     name:SetJustifyH("LEFT")
 	name:SetFont(font, fontsize, "OUTLINE")
 	name:SetShadowOffset(1, -1)
-	
 	self.Name = name
 	
 	
