@@ -39,12 +39,6 @@ local bartex = "Interface\\AddOns\\oUF_Nifty\\textures\\statusbar"
 local bufftex = "Interface\\AddOns\\oUF_Nifty\\textures\\border"
 local playerClass = select(2, UnitClass("player"))
 
--- castbar position
-local playerCastBar_x = 0
-local playerCastBar_y = -300
-local targetCastBar_x = 11
-local targetCastBar_y = -200
-
 -- ------------------------------------------------------------------------
 -- change some colors :)
 -- ------------------------------------------------------------------------
