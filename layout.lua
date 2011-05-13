@@ -29,23 +29,6 @@ do
 	}
 end
 
---local texture = [=[Interface\AddOns\oUF_P3lim\minimalist]=]
--- ------------------------------------------------------------------------
--- local horror
--- ------------------------------------------------------------------------
-local select = select
-local UnitClass = UnitClass
-local UnitIsDead = UnitIsDead
-local UnitIsPVP = UnitIsPVP
-local UnitIsGhost = UnitIsGhost
-local UnitIsPlayer = UnitIsPlayer
-local UnitReaction = UnitReaction
-local UnitIsConnected = UnitIsConnected
-local UnitCreatureType = UnitCreatureType
-local UnitClassification = UnitClassification
-local UnitReactionColor = UnitReactionColor
-local RAID_CLASS_COLORS = RAID_CLASS_COLORS
-
 -- ------------------------------------------------------------------------
 -- font, fontsize and textures
 -- ------------------------------------------------------------------------
