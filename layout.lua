@@ -85,18 +85,13 @@ local menu = function(self)
 	end
 end
 
--- ------------------------------------------------------------------------
--- reformat everything above 9999, i.e. 10000 -> 10k
--- ------------------------------------------------------------------------
-local numberize = function(v)
-	if v <= 999 then return v end
-	
-	if v >= 1000000 then
-		local value = string.format("%.1fm", v/1000000)
-		return value
-	elseif v >= 1000 then
-		local value = string.format("%.1fk", v/1000)
-		return value
+local shortenValue = function (val)
+	if val < 1000 then
+		return val
+	elseif val > 1000000 then
+		return string.format("%.1fm", val / 1000000)
+	else
+		return string.format("%.1fk", val / 1000)
 	end
 end
 
@@ -180,7 +175,7 @@ oUF.Tags['nifty:health'] = function (unit)
 	
 	if unit == "player" then
 		if curHp ~= maxHp then
-			tagValue = "|cff33EE44" .. numberize(curHp) .. "|r"
+			tagValue = "|cff33EE44" .. shortenValue(curHp) .. "|r"
 		else
 			return "";
 		end
@@ -188,12 +183,12 @@ oUF.Tags['nifty:health'] = function (unit)
 		tagValue = percentHp .. "%"
 	elseif unit == "target" then
 		if percentHp < 100 and isFriend then
-			tagValue = "|cffff7f74" .. deficitHp .. "|r |cff33EE44" .. numberize(curHp) .. "/" .. numberize(maxHp) .. "|r"
+			tagValue = "|cffff7f74" .. deficitHp .. "|r |cff33EE44" .. shortenValue(curHp) .. "/" .. shortenValue(maxHp) .. "|r"
 		elseif percentHp < 100 then
-			tagValue = "|r |cff33EE44" .. numberize(curHp) .. "/" .. numberize(maxHp) .. "|r |cff33EE44" .. percentHp .. "%|r"
-			-- tagValue = "|r |cff33EE44" .. numberize(curHp) .. "/" .. numberize(maxHp) .. "|r"
+			tagValue = "|r |cff33EE44" .. shortenValue(curHp) .. "/" .. shortenValue(maxHp) .. "|r |cff33EE44" .. percentHp .. "%|r"
+			-- tagValue = "|r |cff33EE44" .. shortenValue(curHp) .. "/" .. shortenValue(maxHp) .. "|r"
 		else
-			tagValue = "|cff33EE44" .. numberize(maxHp) .. "|r"
+			tagValue = "|cff33EE44" .. shortenValue(maxHp) .. "|r"
 		end
 	elseif curHp == maxHp then
 		tagValue = "" -- maybe pet condition here?
