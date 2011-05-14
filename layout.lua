@@ -162,16 +162,6 @@ oUF.TagEvents['nifty:serendipity'] = "UNIT_AURA"
 oUF.Tags['nifty:name'] = function (unit)
 	local name = UnitName(unit)
 	
-	--[[
-	if unit == "targettarget" then
-		local playerName = UnitName("player")
-		
-		if name == playerName then
-			tagValue = "" -- @TODO: Color SetTextColor(0.9, 0.5, 0.2)
-		end
-	end
-	]]
-	
 	return string.lower(name or "")
 end
 oUF.TagEvents['nifty:name'] = oUF.TagEvents.name
