@@ -323,7 +323,7 @@ local createCastbar = function(self)
 end
 
 local SmallUnit = function (self, ...)
-	self.Name:SetWidth(120)
+	self.Name:SetWidth(80)
 	self.Name:SetHeight(18)
 end
 
