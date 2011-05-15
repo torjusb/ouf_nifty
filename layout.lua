@@ -460,7 +460,7 @@ local UnitSpecific = {
 	end,
 	
 	pet = function (self, ...)
-		SmallUnit(self, ...)
+		self.Name:Hide()
 		
 		self:SetWidth(120)
 		self:SetHeight(18)
