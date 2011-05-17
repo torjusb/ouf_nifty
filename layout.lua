@@ -511,6 +511,13 @@ local UnitSpecific = {
 		castbar:SetWidth(175)
 		
 		self.Castbar = castbar
+		
+		local buffs = createBuffs(self)
+		buffs:SetPoint("RIGHT", self, "LEFT", -7, 0)
+
+		buffs.initialAnchor = "RIGHT"
+		buffs["growth-x"] = "LEFT"
+		buffs.num = 5
 	end,
 }
 
