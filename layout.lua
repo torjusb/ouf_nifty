@@ -213,6 +213,8 @@ oUF.Tags['nifty:power'] = function (unit)
 	end
 
 	local min, max = UnitPower(unit), UnitPowerMax(unit)
+	local _, ptype = UnitPowerType(unit)
+	local color = oUF.colors.power[ptype]
 	local tagValue
 	
 	if UnitIsPlayer(unit) == nil then
@@ -240,7 +242,9 @@ oUF.Tags['nifty:power'] = function (unit)
 		end
 	end
 	
-	return "|cff" .. RGBtoHex(0.2, 0.66, 0.93) .. tagValue .. "|r"
+	color = color and RGBtoHex(unpack(color))
+	
+	return "|cff" .. color .. tagValue .. "|r"
 end
 oUF.TagEvents['nifty:power'] = oUF.TagEvents.missingpp
 
@@ -580,7 +584,7 @@ local Shared = function (self, unit, isSingle)
 	local powerValue = self.Power:CreateFontString(nil, "OVERLAY")
     powerValue:SetPoint("LEFT", self.Health, 0, 9) -- powerbar text in health box
 	powerValue:SetFont(font, fontsize, "OUTLINE")
-	powerValue:SetTextColor(1,1,1)
+	powerValue:SetTextColor(1, 1, 1)
 	powerValue:SetShadowOffset(1, -1)
     powerValue:Hide()
 	self:Tag(powerValue, '[nifty:power]')
