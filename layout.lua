@@ -393,17 +393,16 @@ local UnitSpecific = {
 		debuffs.size = 30
 		
 		debuffs:SetHeight( debuffs.size )
-		debuffs:SetWidth( debuffs.size * 9 )
+		debuffs:SetWidth( debuffs.size * 9 + (9 * 2) )
 		debuffs:SetPoint("TOPLEFT", self, "BOTTOMLEFT", -1, -6)
 		
 		debuffs.initialAnchor = "TOPLEFT"
 		debuffs["growth-y"] = "DOWN"
 		debuffs.filter = false
 		debuffs.num = 20
-		debuffs.spacing = 4
+		debuffs.spacing = 2
 		
 		self.Debuffs = debuffs
-		
 		self.Debuffs.PostCreateIcon = PostCreateIcon
 		
 		
