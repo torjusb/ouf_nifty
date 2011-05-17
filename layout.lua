@@ -275,7 +275,7 @@ oUF.Tags['nifty:power'] = function (unit)
 	end
 	
 	color = color and RGBtoHex(unpack(color)) or ""
-	
+		
 	return "|cff" .. color .. tagValue .. "|r"
 end
 oUF.TagEvents['nifty:power'] = oUF.TagEvents.missingpp
