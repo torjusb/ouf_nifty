@@ -323,6 +323,43 @@ local createCastbar = function(self)
 	return castbar
 end
 
+local createBuffs = function (self)
+	local buffs = CreateFrame("Frame", nil, self) 
+	buffs.size = 23
+	
+	buffs:SetHeight( buffs.size )
+	buffs:SetWidth( buffs.size * 5 + (5 * 3) )
+	
+	buffs.initialAnchor = "BOTTOMLEFT"
+	buffs["growth-y"] = "TOP"
+	buffs.num = 20
+	buffs.spacing = 3
+	
+	self.Buffs = buffs
+	self.Buffs.PostCreateIcon = PostCreateIcon
+	
+	return buffs
+end
+
+local createDebuffs = function (self)
+	local debuffs = CreateFrame("Frame", nil, self)
+	debuffs.size = 30
+	
+	debuffs:SetHeight( debuffs.size )
+	debuffs:SetWidth( debuffs.size * 9 + (9 * 2) )
+	
+	debuffs.initialAnchor = "TOPLEFT"
+	debuffs["growth-y"] = "DOWN"
+	debuffs.filter = false
+	debuffs.num = 20
+	debuffs.spacing = 2
+	
+	self.Debuffs = debuffs
+	self.Debuffs.PostCreateIcon = PostCreateIcon
+	
+	return debuffs
+end
+
 local SmallUnit = function (self, ...)
 	self.Name:SetWidth(80)
 	self.Name:SetHeight(18)
@@ -373,38 +410,12 @@ local UnitSpecific = {
 		self.Name:SetHeight(20)
 		
 		--[[ Buffs ]]--
-		local buffs = CreateFrame("Frame", nil, self) 
-		buffs.size = 23
-		
-		buffs:SetHeight( buffs.size )
-		buffs:SetWidth( buffs.size * 5 + (5 * 3) )
+		local buffs = createBuffs(self) 
 		buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -1, 15)
 		
-		buffs.initialAnchor = "BOTTOMLEFT"
-		buffs["growth-y"] = "TOP"
-		buffs.num = 20
-		buffs.spacing = 3
-		
-		self.Buffs = buffs
-		self.Buffs.PostCreateIcon = PostCreateIcon
-		
 		--[[ Debuffs ]]--
-		local debuffs = CreateFrame("Frame", nil, self)
-		debuffs.size = 30
-		
-		debuffs:SetHeight( debuffs.size )
-		debuffs:SetWidth( debuffs.size * 9 + (9 * 2) )
+		local debuffs = createDebuffs(self)
 		debuffs:SetPoint("TOPLEFT", self, "BOTTOMLEFT", -1, -6)
-		
-		debuffs.initialAnchor = "TOPLEFT"
-		debuffs["growth-y"] = "DOWN"
-		debuffs.filter = false
-		debuffs.num = 20
-		debuffs.spacing = 2
-		
-		self.Debuffs = debuffs
-		self.Debuffs.PostCreateIcon = PostCreateIcon
-		
 		
 		-- Castbar
 		local castbar = createCastbar(self)
