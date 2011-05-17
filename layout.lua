@@ -109,20 +109,22 @@ oUF.Tags['nifty:level'] = function (unit)
 	local classification = UnitClassification(unit)
 	local _, class = UnitClass(unit)
 	local color = GetQuestDifficultyColor(lvl)
+	local colorTag = "|cff" .. RGBtoHex(color.r, color.g, color.b)
 	local tagValue
 	
 	if lvl <= 0 then
 		lvl = "??"
 	end
+
 	
 	if classification == "worldboss" then
 		tagValue = "|cffff0000" .. lvl .. "b|r"
 	elseif classification == "rareelite" then
-		tagValue = lvl .. "r+"
+		tagValue = colorTag .. lvl .. "r+"
 	elseif classification == "elite" then
-		tagValue = lvl .. "+"
+		tagValue = colorTag .. lvl .. "+"
 	elseif classification == "rare" then
-		tagValue = lvl .. "r"
+		tagValue = colorTag .. lvl .. "r"
 	else
 		if not UnitIsPlayer(unit) then
 			tagValue = "|cff" .. RGBtoHex(color.r, color.g, color.b)
@@ -135,9 +137,8 @@ oUF.Tags['nifty:level'] = function (unit)
 		else
 			tagValue = tagValue .. lvl
 		end
-		
-		tagValue = tagValue .. "|r"
 	end
+	tagValue = tagValue .. "|r"
 
 	return tagValue
 end
