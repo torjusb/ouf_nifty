@@ -619,4 +619,18 @@ oUF:Factory( function (self)
 	spawn(self, 'focus', 'RIGHT', player, 0, -30)
 	spawn(self, 'pet', 'LEFT', player, 0, -30)
 	spawn(self, "targettarget", "TOPRIGHT", target, 0, 35)
+	
+	self:SetActiveStyle('Nifty')
+	local prev
+	for i = 1, MAX_BOSS_FRAMES do
+		local boss = self:Spawn("boss" .. i)
+		
+		if prev then
+			boss:SetPoint("TOP", prev, "BOTTOM", 0, -20)
+		else
+			boss:SetPoint("RIGHT", -30, 0)
+		end
+		
+		prev = boss
+	end
 end)
