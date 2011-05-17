@@ -433,7 +433,7 @@ local UnitSpecific = {
 			cpoints:SetTextColor(0, 0.81, 1)
 			cpoints:SetShadowOffset(1, -1)
 			cpoints:SetJustifyH("RIGHT")
-			
+
 			self:Tag(cpoints, "[cpoints]")
 		end
 	end,
@@ -620,4 +620,3 @@ oUF:Factory( function (self)
 	spawn(self, 'pet', 'LEFT', player, 0, -30)
 	spawn(self, "targettarget", "TOPRIGHT", target, 0, 35)
 end)
-
