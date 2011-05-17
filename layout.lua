@@ -426,14 +426,15 @@ local UnitSpecific = {
 		self.RaidIcon = raidIcon
 		
 		if playerClass == "ROGUE" or playerClass == "DRUID" then
-			local comboPoints = self:CreateFontString(nil, "OVERLAY")
-			comboPoints:SetPoint("RIGHT", self, "LEFT", -10, 0)
-			comboPoints:SetFont(font, 20, "OUTLINE")
-			comboPoints:SetTextColor(0, 0.81, 1)
-			comboPoints:SetShadowOffset(1, -1)
-			comboPoints:SetJustifyH"RIGHT" 
+			local cpoints = self:CreateFontString(nil, "OVERLAY")
+			cpoints:SetPoint("RIGHT", self, "LEFT", -10, 0)
+				
+			cpoints:SetFont(font, 20, "OUTLINE")
+			cpoints:SetTextColor(0, 0.81, 1)
+			cpoints:SetShadowOffset(1, -1)
+			cpoints:SetJustifyH("RIGHT")
 			
-			self.CPoints = comboPoints
+			self:Tag(cpoints, "[cpoints]")
 		end
 	end,
 	
