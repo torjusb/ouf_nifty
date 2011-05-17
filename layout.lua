@@ -518,6 +518,14 @@ local UnitSpecific = {
 		buffs.initialAnchor = "RIGHT"
 		buffs["growth-x"] = "LEFT"
 		buffs.num = 5
+		
+		local raidIcon = self.Health:CreateTexture(nil, "OVERLAY")
+		raidIcon:SetHeight(16)
+		raidIcon:SetWidth(16)
+		raidIcon:SetPoint("TOP", self, 0, 9)
+		raidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+		
+		self.RaidIcon = raidIcon
 	end,
 }
 
