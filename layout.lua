@@ -486,9 +486,26 @@ local UnitSpecific = {
 		self.Health:SetHeight(15)
 		self.Power:SetHeight(2)
 	end,
+	
+	boss = function (self, ...)
+		self:Tag(self.Name, '[nifty:name]')
+		
+		self:SetWidth(175)
+		
+		local castbar = createCastbar(self)
+		castbar:SetPoint('TOP', self, 'BOTTOM', 0, -10)
+		
+		castbar:SetStatusBarColor(0.80, 0.01, 0)
+		castbar:SetHeight(18)
+		castbar:SetWidth(175)
+		
+		self.Castbar = castbar
+	end,
 }
 
 local Shared = function (self, unit, isSingle)
+	unit = unit:find("boss%d") and "boss" or unit
+
 	self.menu = menu -- Enable the menus
 	
 	self:SetScript("OnEnter", UnitFrame_OnEnter)
@@ -626,11 +643,19 @@ oUF:Factory( function (self)
 		local boss = self:Spawn("boss" .. i)
 		
 		if prev then
-			boss:SetPoint("TOP", prev, "BOTTOM", 0, -20)
+			boss:SetPoint("TOP", prev, "BOTTOM", 0, -30)
 		else
 			boss:SetPoint("RIGHT", -30, 0)
 		end
 		
 		prev = boss
 	end
+	
+	--[[!! Test code !!]]--
+	for i, v in pairs(oUF.objects) do
+		v.unit = "player"
+		v:Show()
+		v.Hide = v.Show
+	end
 end)
+
