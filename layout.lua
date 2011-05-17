@@ -214,7 +214,7 @@ oUF.Tags['nifty:power'] = function (unit)
 
 	local min, max = UnitPower(unit), UnitPowerMax(unit)
 	local _, ptype = UnitPowerType(unit)
-	local color = oUF.colors.power[ptype]
+	local color = colors.power[ptype]
 	local tagValue
 	
 	if UnitIsPlayer(unit) == nil then
@@ -681,11 +681,11 @@ oUF:Factory( function (self)
 		prev = boss
 	end
 	
-	--[[!! Test code !!]]--
+	--[[!! Test code !!
 	for i, v in pairs(oUF.objects) do
 		v.unit = "player"
 		v:Show()
 		v.Hide = v.Show
-	end
+	end]]--
 end)
 
