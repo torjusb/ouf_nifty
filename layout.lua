@@ -16,6 +16,7 @@
 	
 	TODO:
 		- Pet health text is uncolored and only shows deficit
+		- AltPowerValue for boss frames
 	
 ]]
 
@@ -180,10 +181,10 @@ oUF.Tags['nifty:health'] = function (unit)
 		else
 			return "";
 		end
-	elseif unit == "targettarget" or unit == "focus" then
+	elseif unit == "targettarget" or unit == "focus" or unit:find("boss%d") then
 		tagValue = percentHp .. "%"
 	elseif unit == "target" then
-		if percentHp < 100 and isFriend then
+		if percentHp < 100 and isFriend and unit == "target" then
 			tagValue = "|cffff7f74" .. deficitHp .. "|r |cff33EE44" .. shortenValue(curHp) .. "/" .. shortenValue(maxHp) .. "|r"
 		elseif percentHp < 100 then
 			tagValue = "|r |cff33EE44" .. shortenValue(curHp) .. "/" .. shortenValue(maxHp) .. "|r |cff33EE44" .. percentHp .. "%|r"
@@ -242,7 +243,7 @@ oUF.Tags['nifty:power'] = function (unit)
 		end
 	end
 	
-	color = color and RGBtoHex(unpack(color))
+	color = color and RGBtoHex(unpack(color)) or ""
 	
 	return "|cff" .. color .. tagValue .. "|r"
 end
@@ -350,7 +351,7 @@ local createDebuffs = function (self)
 	debuffs.size = 30
 	
 	debuffs:SetHeight( debuffs.size )
-	debuffs:SetWidth( debuffs.size * 9 + (9 * 2) )
+	debuffs:SetWidth( debuffs.size * 8 + (9 * 2) )
 	
 	debuffs.initialAnchor = "TOPLEFT"
 	debuffs["growth-y"] = "DOWN"
@@ -508,7 +509,7 @@ local UnitSpecific = {
 		self:SetWidth(175)
 		
 		local castbar = createCastbar(self)
-		castbar:SetPoint('TOP', self, 'BOTTOM', 0, -10)
+		castbar:SetPoint('TOP', self, 'BOTTOM', 0, -6)
 		
 		castbar:SetStatusBarColor(0.80, 0.01, 0)
 		castbar:SetHeight(18)
@@ -675,7 +676,7 @@ oUF:Factory( function (self)
 		if prev then
 			boss:SetPoint("TOP", prev, "BOTTOM", 0, -30)
 		else
-			boss:SetPoint("RIGHT", -30, 0)
+			boss:SetPoint("RIGHT", -40, 0)
 		end
 		
 		prev = boss
