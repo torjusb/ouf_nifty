@@ -86,6 +86,14 @@ local menu = function(self)
 	end
 end
 
+local isUnitActive = function (unit)
+	if not UnitIsConnected(unit) or UnitIsDead(unit) or UnitIsGhost(unit) then
+		return false
+	end
+	
+	return true
+end
+
 local shortenValue = function (val)
 	if val < 1000 then
 		return val
@@ -163,50 +171,73 @@ oUF.Tags['nifty:name'] = function (unit)
 end
 oUF.TagEvents['nifty:name'] = oUF.TagEvents.name
 
-oUF.Tags['nifty:health'] = function (unit)	
-	if not UnitIsConnected(unit) or UnitIsDead(unit) or UnitIsGhost(unit) then 
+oUF.Tags['nifty:health'] = function (unit)
+	if not isUnitActive(unit) then
+		return
+	end
+
+	local cur, max = UnitHealth(unit), UnitHealthMax(unit)
+	local tagValue
+	
+	if cur == max then
+		tagValue = "|cff33EE44" .. shortenValue(cur) .. "|r"
+	else 
+		tagValue = "|cff33EE44" .. shortenValue(cur) .. "/" .. shortenValue(max) .. "|r"
+	end
+	
+	return tagValue
+end
+
+oUF.Tags['nifty:currentHealth'] = function (unit)
+	if not isUnitActive(unit) then
 		return
 	end
 	
-	local curHp, maxHp = UnitHealth(unit), UnitHealthMax(unit)
-	local deficitHp = curHp - maxHp
-	local percentHp = floor(curHp / maxHp * 100)
-	local isFriend = UnitIsFriend("player", "target")
-	local unitLvl = UnitLevel("target")
-	local tagValue
+	local cur, max = UnitHealth(unit), UnitHealthMax(unit)
 	
-	if unit == "player" then
-		if curHp ~= maxHp then
-			tagValue = "|cff33EE44" .. shortenValue(curHp) .. "|r"
-		else
-			return "";
-		end
-	elseif unit == "targettarget" or unit == "focus" or unit:find("boss%d") then
-		tagValue = percentHp .. "%"
-	elseif unit == "target" then
-		if percentHp < 100 and isFriend and unit == "target" then
-			tagValue = "|cffff7f74" .. deficitHp .. "|r |cff33EE44" .. shortenValue(curHp) .. "/" .. shortenValue(maxHp) .. "|r"
-		elseif percentHp < 100 then
-			tagValue = "|r |cff33EE44" .. shortenValue(curHp) .. "/" .. shortenValue(maxHp) .. "|r |cff33EE44" .. percentHp .. "%|r"
-			-- tagValue = "|r |cff33EE44" .. shortenValue(curHp) .. "/" .. shortenValue(maxHp) .. "|r"
-		else
-			tagValue = "|cff33EE44" .. shortenValue(maxHp) .. "|r"
-		end
-	elseif curHp == maxHp then
-		tagValue = "" -- maybe pet condition here?
-	else
-		if (maxHp - curHp) < maxHp then	
-			if unit == "pet" then
-				tagValue = "-" .. maxHp - curHp
-			else
-				tagValue = "-" .. maxHp - curHp
-			end
-		end
+	if cur == max then
+		return ""
+	end
+	
+	return "|cff33EE44" .. shortenValue(cur) .. "|r"
+end
+
+oUF.Tags['nifty:deficit'] = function (unit)
+	if not isUnitActive(unit) then
+		return
+	end
+	
+	if not UnitIsFriend("player", unit) then
+		return ""
+	end
+	
+	local cur, max = UnitHealth(unit), UnitHealthMax(unit)
+	if cur == max then
+		return ""
 	end
 		
-	return tagValue
+	return "|cffff7f74" .. (cur - max) .. "|r"
 end
+
+oUF.Tags['nifty:percentHealth'] = function (unit)
+	if not isUnitActive(unit) then
+		return
+	end
+	
+	if unit == "target" and UnitIsFriend("player", unit) then
+		return ""
+	end
+
+	local cur, max = UnitHealth(unit), UnitHealthMax(unit)
+	local percent = floor(cur / max * 100)
+	
+	return "|cff33EE44 " .. percent .. "%|r"
+end
+
 oUF.TagEvents['nifty:health'] = oUF.TagEvents.missinghp
+oUF.TagEvents['nifty:currentHealth'] = oUF.TagEvents.missinghp
+oUF.TagEvents['nifty:deficit'] = oUF.TagEvents.missinghp
+oUF.TagEvents['nifty:percentHealth'] = oUF.TagEvents.missinghp
 
 oUF.Tags['nifty:power'] = function (unit)
 	if not UnitIsConnected(unit) or UnitIsDead(unit) or UnitIsGhost(unit) then 
@@ -368,10 +399,14 @@ end
 local SmallUnit = function (self, ...)
 	self.Name:SetWidth(80)
 	self.Name:SetHeight(18)
+	
+	self:Tag(self.Health.value, '[nifty:currentHealth]')
 end
 
 local UnitSpecific = {
-	player = function (self, ...)	
+	player = function (self, ...)
+		self:Tag(self.Health.value, '[nifty:currentHealth]')
+	
 		self.Power.value:Show()
 	
         -- Serendipity counter
@@ -410,6 +445,7 @@ local UnitSpecific = {
 	
 	target = function (self, ...)
 		self:Tag(self.Name, '[nifty:level] [nifty:name]')
+		self:Tag(self.Health.value, '[nifty:deficit] [nifty:health][nifty:percentHealth]')
 		
 		self.Name:SetWidth(120)
 		self.Name:SetHeight(20)
@@ -505,6 +541,7 @@ local UnitSpecific = {
 	
 	boss = function (self, ...)
 		self:Tag(self.Name, '[nifty:name]')
+		self:Tag(self.Health.value, '[nifty:currentHealth] [nifty:percentHealth]')
 		
 		self:SetWidth(175)
 		
