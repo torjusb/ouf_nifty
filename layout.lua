@@ -194,7 +194,7 @@ oUF.Tags['nifty:currentHealth'] = function (unit)
 	end
 	
 	local cur, max = UnitHealth(unit), UnitHealthMax(unit)
-	
+
 	if cur == max then
 		return ""
 	end
@@ -513,6 +513,8 @@ local UnitSpecific = {
 	end,
 	
 	pet = function (self, ...)
+		SmallUnit(self, ...)
+		
 		self.Name:Hide()
 		
 		self:SetWidth(120)
