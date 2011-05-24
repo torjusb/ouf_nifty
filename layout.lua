@@ -551,7 +551,7 @@ local UnitSpecific = {
 		castbar:SetPoint('TOP', self, 'BOTTOM', 0, -6)
 		
 		castbar:SetStatusBarColor(0.80, 0.01, 0)
-		castbar:SetHeight(18)
+		castbar:SetHeight(16)
 		castbar:SetWidth(175)
 		
 		self.Castbar = castbar
@@ -713,7 +713,7 @@ oUF:Factory( function (self)
 		local boss = self:Spawn("boss" .. i)
 		
 		if prev then
-			boss:SetPoint("TOP", prev, "BOTTOM", 0, -30)
+			boss:SetPoint("TOP", prev, "BOTTOM", 0, -35)
 		else
 			boss:SetPoint("RIGHT", -40, 0)
 		end
