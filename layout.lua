@@ -554,6 +554,9 @@ local UnitSpecific = {
 		castbar:SetHeight(16)
 		castbar:SetWidth(175)
 		
+		castbar.Text:SetWidth(140)
+		castbar.Text:SetHeight(16)
+		
 		self.Castbar = castbar
 		
 		local buffs = createBuffs(self)
