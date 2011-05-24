@@ -723,12 +723,5 @@ oUF:Factory( function (self)
 		
 		prev = boss
 	end
-	
-	--[[!! Test code !!
-	for i, v in pairs(oUF.objects) do
-		v.unit = "player"
-		v:Show()
-		v.Hide = v.Show
-	end]]--
 end)
 
