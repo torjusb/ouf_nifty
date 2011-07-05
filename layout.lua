@@ -546,6 +546,8 @@ local UnitSpecific = {
 		self:Tag(self.Health.value, '[nifty:currentHealth] [nifty:percentHealth]')
 		
 		self:SetWidth(175)
+		self.Name:SetWidth(120)
+		self.Name:SetHeight(20)
 		
 		local castbar = createCastbar(self)
 		castbar:SetPoint('TOP', self, 'BOTTOM', 0, -6)
